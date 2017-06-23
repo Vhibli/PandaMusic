@@ -49,6 +49,8 @@ import me.wcy.lrcview.LrcView;
  */
 public class PlayFragment extends BaseFragment implements View.OnClickListener,
         ViewPager.OnPageChangeListener, SeekBar.OnSeekBarChangeListener ,DiscView.IPlayInfo{
+
+
     @Bind(R.id.ll_content)
     private LinearLayout llContent;
     @Bind(R.id.iv_play_page_bg)
@@ -138,7 +140,6 @@ public class PlayFragment extends BaseFragment implements View.OnClickListener,
         View lrcView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_play_page_lrc, null);
 
 
-
         mDiscView = (DiscView) coverView.findViewById(R.id.discview);
 
         Logger.d(AppCache.getMusicList().size());
@@ -209,12 +210,15 @@ public class PlayFragment extends BaseFragment implements View.OnClickListener,
                 break;
             case R.id.iv_play:
                 play();
+                mDiscView.playOrPause();
                 break;
             case R.id.iv_next:
                 next();
+                mDiscView.next();
                 break;
             case R.id.iv_prev:
                 prev();
+                mDiscView.last();
                 break;
         }
     }
@@ -276,9 +280,12 @@ public class PlayFragment extends BaseFragment implements View.OnClickListener,
         setCoverAndBg(music);
         setLrc(music);
         if (getPlayService().isPlaying() || getPlayService().isPreparing()) {
+            Logger.d("Music onPlay");
             ivPlay.setSelected(true);
             mDiscView.playOrPause();
         } else {
+            Logger.d("Music is not onPlay");
+            //图片切换错误 error
             ivPlay.setSelected(false);
             mDiscView.playOrPause();
         }
@@ -433,8 +440,7 @@ public class PlayFragment extends BaseFragment implements View.OnClickListener,
 
         tvArtist.setText(music.getArtist());
         tvTitle.setText(music.getTitle());
-        setCoverAndBg(music);
-        onChange(music);
+       // onChange(music);
 
     }
 
@@ -453,7 +459,7 @@ public class PlayFragment extends BaseFragment implements View.OnClickListener,
            switch (musicChangedStatus){
 
                case PLAY:
-                   play();
+                   onPlayerPause();
                    break;
                case PAUSE:
                    onPlayerPause();
@@ -465,7 +471,7 @@ public class PlayFragment extends BaseFragment implements View.OnClickListener,
                    prev();
                    break;
                case STOP:
-                  play();
+                   onPlayerPause();
                    break;
 
 
